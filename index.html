@@ -23,9 +23,11 @@
 			}
 
 			input {
-				margin: center;
+				margin: auto;
 				padding: 12px;
+				text-align: center;
 			}
+			
 
 			table {
 				margin-top: center;
@@ -196,7 +198,7 @@ text-shadow: 0 0 1px black;
 			<label for="harga">Harga:</label>
 			<input type="text" id="harga" name="harga" onchange="formatNumber(this)" onkeyup="formatNumber(this)" placeholder="0">
 			<div class="form-group text-center">
-			<button type="button" onclick="tambah()">Tambahkan Belanja</button>
+			<button type="button" class="btn btn-primary whatsapp-button" button type="button" onclick="tambah()">Tambahkan Belanja</button>
 			</div>
 		</form>
 		<table id="tabel-belanja">
@@ -223,23 +225,11 @@ text-shadow: 0 0 1px black;
 		<br><center>
 	<b>Catatan:</b><em>"ndak wajib download file nya yang, ini untuk kirim catatan otomatis ke wa sayang sendiri ---------- !!"</em>
 	<td>
-	<button onclick="download()">Download</button>
-	<button onclick="kirimWhatsApp()" class="blink-black">Kirim WhatsApp</button>
-
-<style>
-.blink-black {
-    animation: blink 1s infinite;
-    color: black;
-}
-@keyframes blink {
-    0% {opacity: 1;}
-    50% {opacity: 0.5;}
-    100% {opacity: 1;}
-}
-</style>
+	<button type="button" class="btn btn-primary whatsapp-button" button onclick="download()">Download</button>
+	<button type="button" class="btn btn-primary whatsapp-button" button onclick="kirimWhatsApp()" class="blink-black">Kirim WhatsApp</button>
 
 
-		<script>
+	<script>
 		
 		let belanjaan = [];
 
@@ -346,46 +336,29 @@ function download() {
 
 
 function kirimWhatsApp() {
-  let text = "Catatan:\n";
-  belanjaan.forEach((belanja) => {
-    // Parse tanggal dari string ke objek Date
-    let tanggalObj = new Date(belanja.tanggal);
-    // Periksa apakah tanggal valid, jika ya, format tanggal menjadi format Indonesia
-    if (!isNaN(tanggalObj.getTime())) {
-      let formattedDate = tanggalObj.toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "numeric",
-        year: "numeric",
-      });
-      text += `${formattedDate} - ${belanja.deskripsi}: ${belanja.harga.toLocaleString()}\n`;
-    }
-  });
+  let nomorUrut = 1;
+  let text = "Catatan Belanjaan:\n";
+  let tabelBelanja = document.getElementById("tabel-belanja");
+  let rowLength = tabelBelanja.rows.length;
+  for (let i = 1; i < rowLength - 1; i++) {
+    let tanggal = tabelBelanja.rows[i].cells[0].innerHTML;
+    let deskripsi = tabelBelanja.rows[i].cells[1].innerHTML;
+    let harga = tabelBelanja.rows[i].cells[2].innerHTML;
+    text += `${nomorUrut}. ${tanggal} - ${deskripsi} - ${harga}\n`;
+    nomorUrut++;
+  }
   let encodedText = encodeURIComponent(text);
-  window.open(`https://api.whatsapp.com/send?phone=6285247502344&text=${encodedText}`);
+  let phoneNumber = "6285247502344";
+  let link = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodedText}`;
 
-  // Atur format tanggal menjadi format Indonesia
-  var date = new Date();
-  var options = {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    second: "numeric",
-    timeZone: "Asia/Jakarta",
-  };
-  var formattedDate = date.toLocaleDateString("id-ID", options);
-
-  // Tambahkan tanggal ke pesan
-  var fullMessage = pesan + "%0A%0A" + formattedDate;
-
-  // Tambahkan pesan ke link WhatsApp
-  link += encodeURIComponent(fullMessage);
-
-  // Buka link WhatsApp pada tab baru
-  window.open(link);
+  window.open(link, "_blank");
 }
+
+
+
+
+
+
 
 
 
